@@ -9,6 +9,8 @@ import CookingItem
 import MainFood
 import Spice
 import requests
+import DietaryOptions
+import ApiRequestBuilder
 
 class Pantry():
     def __init__(self, name):
@@ -30,8 +32,15 @@ class Pantry():
         
         food_to_use = input("Which food would you like to make a meal out of? (Enter the option number):\n")
         print("Finding recipes with your restrictions for {0}".format(self.mains[int(food_to_use)].item))
-        potential_recipe = requests.get("https://api.edamam.com/search?q={main}&app_id=ab4bf454&app_key=80971399f1f660312ba74b72ad419237&from=0&to=20&calories=591-722&health=peanut-free&health=tree-nut-free".format(main=self.mains[int(food_to_use)].item))
-        print(potential_recipe.json()['hits'])
+        
+        diet_options=DietaryOptions.get_diet_options()
+        print(diet_options)
+        
+        ApiRqst = ApiRequestBuilder.ApiRequestBuilder(self.mains[int(food_to_use)].item, diet_options)
+        potential_recipe = requests.get(ApiRqst.get_api_string())
+        if potential_recipe.json()['count'] == 0:
+            print("Unforuantely we couldn't find any matches for you! Try changing your preferences")
+            return
         recipes = potential_recipe.json()['hits']
         for rcp in recipes:
             print(rcp['recipe']['label'])
