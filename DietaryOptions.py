@@ -53,7 +53,7 @@ def set_calorie_range():
     else:
         low_cal = 0
         high_cal = 10000
-        set_cal = input("The default settings do not care about calorie count.\nWould you like to set Lower/Upper limits? (Defaul to No)\n")
+        set_cal = input("The default settings do not care about calorie count.\nWould you like to set Lower/Upper limits? (Default to No)\n")
         if len(set_cal) == 0:
             set_cal = 'N'
         else:
