@@ -35,8 +35,9 @@ class Pantry():
         
         diet_options=DietaryOptions.get_diet_options()
         print(diet_options)
+        l_cal, h_cal = DietaryOptions.set_calorie_range()
         
-        ApiRqst = ApiRequestBuilder.ApiRequestBuilder(self.mains[int(food_to_use)].item, diet_options)
+        ApiRqst = ApiRequestBuilder.ApiRequestBuilder(self.mains[int(food_to_use)].item, diet_options, l_cal, h_cal)
         potential_recipe = requests.get(ApiRqst.get_api_string())
         if potential_recipe.json()['count'] == 0:
             print("Unforuantely we couldn't find any matches for you! Try changing your preferences")
