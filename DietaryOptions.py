@@ -7,8 +7,7 @@ Created on Sun Nov  3 19:19:17 2019
 
 potential_diet_options={"Well Balanced":"balanced", "High Protein":"high-protein","Low Fat":"low-fat","Low Carb":"low-carb","Vegan":"vegan","Vegatarian":"vegetarian","Sugar Conscious":"sugar-conscious","Peanut Free":"peanut-free","Tree Nut Free":"tree-nut-free","Alcohol Free":"alcohol-free"}
 select_diet_options= []
-m_low_cal = 0
-m_high_cal = 10000
+filter_vars={"m_low_cal":0, "m_high_cal":10000, "m_base_number_returned":25}
 
 def get_diet_options():
     if len(select_diet_options) != 0:
@@ -33,8 +32,8 @@ def get_diet_options():
     return select_diet_options
         
 def set_calorie_range():
-    low_cal = m_low_cal
-    high_cal = m_high_cal
+    low_cal = filter_vars["m_low_cal"]
+    high_cal = filter_vars["m_high_cal"]
     if low_cal != 0 or high_cal != 10000:
         print("You currently have a calorie setting stored of the following:")
         if low_cal == None:
@@ -69,5 +68,23 @@ def set_calorie_range():
     high_cal = input("High Cal: {0} should be:".format(high_cal))
     if len(high_cal) == 0:
         high_cal = c_high_cal
+    low_cal = int(low_cal)
+    high_cal = int(high_cal)
+    filter_vars["m_low_cal"] = low_cal
+    filter_vars["m_high_cal"] = high_cal
     
     return low_cal, high_cal
+
+def set_filter_counter():
+    number_returned = filter_vars["m_base_number_returned"]
+    change_filter = input("The current option is to return {0} recipes in our search.\nWould you like to change that? (Default to No)\n".format(number_returned))
+    if len(change_filter) == 0:
+        change_filter = 'N'
+    if change_filter == 'Y':
+        number_returned = input("How many recipes should be shown? (Press Enter to keep at {0})".format(number_returned))
+        if len(number_returned) == 0:
+            number_returned = filter_vars["m_base_number_returned"]
+        else:
+            number_returned = int(number_returned)
+            filter_vars["m_base_number_returned"] = number_returned
+    return number_returned
