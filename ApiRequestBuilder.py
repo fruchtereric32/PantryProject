@@ -14,7 +14,6 @@ class ApiRequestBuilder:
         diet_items=["balanced","high-protein","low-fat","low-carb"]
         
         self.api_string = "https://api.edamam.com/search?q={main}&app_id={ai}&app_key={ak}&from=0&to={fn}&calories={l_c}-{h_c}".format(main=main, ai=self.app_id, ak=self.app_key, l_c=lc, h_c=hc, fn=fn)
-        blah=input(self.api_string)
         if len(hl) > 0:
             for itm in hl:
                 if itm in health_items:

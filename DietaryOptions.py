@@ -76,15 +76,21 @@ def set_calorie_range():
     return low_cal, high_cal
 
 def set_filter_counter():
-    number_returned = filter_vars["m_base_number_returned"]
-    change_filter = input("The current option is to return {0} recipes in our search.\nWould you like to change that? (Default to No)\n".format(number_returned))
-    if len(change_filter) == 0:
-        change_filter = 'N'
-    if change_filter == 'Y':
-        number_returned = input("How many recipes should be shown? (Press Enter to keep at {0})".format(number_returned))
-        if len(number_returned) == 0:
-            number_returned = filter_vars["m_base_number_returned"]
-        else:
-            number_returned = int(number_returned)
-            filter_vars["m_base_number_returned"] = number_returned
+    while True:
+        number_returned = filter_vars["m_base_number_returned"]
+        change_filter = input("The current option is to return {0} recipes in our search.\nWould you like to change that? (Default to No)\n".format(number_returned))
+        if len(change_filter) == 0:
+            change_filter = 'N'
+        if change_filter.upper() == 'Y':
+            number_returned = input("How many recipes should be shown? (Press Enter to keep at {0})".format(number_returned))
+            if len(number_returned) == 0:
+                number_returned = filter_vars["m_base_number_returned"]
+            else:
+                number_returned = int(number_returned)
+                if number_returned < 1:
+                    print("Any number less than 1 is invalid")
+                    continue
+                else:
+                    break
+    filter_vars["m_base_number_returned"] = number_returned
     return number_returned
