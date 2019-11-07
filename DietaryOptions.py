@@ -70,6 +70,18 @@ def set_calorie_range():
         high_cal = c_high_cal
     low_cal = int(low_cal)
     high_cal = int(high_cal)
+    while low_cal > high_cal:
+        c_low_cal = filter_vars["m_low_cal"]
+        c_high_cal = filter_vars["m_high_cal"]
+        print("The lower calorie setting can't be higher than the high calorie setting. Please try again")
+        low_cal = input("Low Cal: {0} should be:".format(c_low_cal))
+        if len(low_cal) == 0:
+            low_cal = c_low_cal
+        high_cal = input("High Cal: {0} should be:".format(c_high_cal))
+        if len(high_cal) == 0:
+            high_cal = c_high_cal
+        low_cal = int(low_cal)
+        high_cal = int(high_cal)
     filter_vars["m_low_cal"] = low_cal
     filter_vars["m_high_cal"] = high_cal
     
