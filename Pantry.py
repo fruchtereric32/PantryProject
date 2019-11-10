@@ -21,9 +21,19 @@ class Pantry():
         return self.name
     
     def add_main(self, cm, qt=0):
+        for mn in self.mains:
+            m_mn, m_qty = mn.get_item()
+            if m_mn == cm:
+                mn.add_amnt()
+                return
         self.mains.append(MainFood.MainFood(cm, qt))
     
     def add_spice(self, sp_name, sp_amt):
+        for sp in self.spices:
+            s_mn, s_qty = sp.get_item()
+            if s_mn == sp_name:
+                sp.add_amnt()
+                return
         self.spices.append(Spice.Spice(sp_name,sp_amt))
         
     def add_item(self, main_or_side):
@@ -70,3 +80,13 @@ class Pantry():
             print(rcp['recipe']['label'])
             print(rcp['recipe']['ingredientLines'])
             print("\n\n")
+            
+    def print_items(self):
+        print("Here are a list of items that are in your pantry")
+        print("Mains")
+        for cnt in range(len(self.mains)):
+            print("You have {qty} number of {itm}".format(qty=self.mains[cnt].amount, itm=self.mains[cnt].item))
+        print("Ingredients")
+        for spc in self.spices:
+            s_itm, s_qty = spc.get_item()
+            print("You have {qty} number of {itm}.".format(qty=s_qty, itm=s_itm))

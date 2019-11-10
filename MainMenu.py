@@ -46,7 +46,7 @@ class MainMenu:
             print("==========================================")
             print("What would you like to do?")
             optn = None
-            while optn not in ['0','1','2','3','4','5','6','7','8']:
+            while optn not in ['0','1','2','3','4','5','6','7','8','9','11']:
                 for k,v in self.menu_options.items():
                     print("{num_val}: {written_option}".format(num_val=k,written_option=v))
                 optn = input("Press the number corresponding to the action you want to take:")
@@ -75,6 +75,15 @@ class MainMenu:
                 else:
                     m_or_s = 'S'
                     self.selectedPantry.add_item(m_or_s)
+            elif optn == "11":
+                print("HERE!!!!")
+                if self.selectedPantry == None:
+                    os.system("clear")
+                    print("ERROR: No pantry selected to print")
+                    continue
+                else:
+                    print("HERE!!!!")
+                    self.selectedPantry.print_items()
             elif optn == '8':
                 return
             elif optn == '7' and self.selectedMain == None:
