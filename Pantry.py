@@ -5,7 +5,6 @@ Created on Sun Nov  3 17:00:10 2019
 @author: ericp
 """
 
-import CookingItem
 import MainFood
 import Spice
 import requests
@@ -18,11 +17,34 @@ class Pantry():
         self.mains=[]
         self.spices=[]
     
+    def get_name(self):
+        return self.name
+    
     def add_main(self, cm, qt=0):
         self.mains.append(MainFood.MainFood(cm, qt))
     
     def add_spice(self, sp_name, sp_amt):
         self.spices.append(Spice.Spice(sp_name,sp_amt))
+        
+    def add_item(self, main_or_side):
+        item_adding = ""
+        while len(item_adding) == 0:
+            item_adding = ""
+            while len(item_adding) == 0:
+                item_adding = input("What item are you adding to the pantry?")
+        if main_or_side == 'S':
+            num_bought = None
+            try:
+                num_bought = input("How many of this spice did you buy? (Deafult to 1)")
+                num_bought = int(num_bought)
+            except ValueError:
+                num_bought = 1
+            if num_bought < 1:
+                num_bought = 1
+            self.add_spice(item_adding, num_bought)
+        else:
+            self.add_main(item_adding)
+                
         
     def look_for_recipe(self):
         print("Here are a list of items that are in your pantry")
@@ -48,12 +70,3 @@ class Pantry():
             print(rcp['recipe']['label'])
             print(rcp['recipe']['ingredientLines'])
             print("\n\n")
-
-Home=Pantry("home")
-Home.add_main("Chicken".lower(),2)
-
-Home.add_spice("Paprika".lower(), 5)
-
-
-Home.look_for_recipe()
-

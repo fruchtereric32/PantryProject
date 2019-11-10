@@ -4,8 +4,8 @@ Created on Thu Nov  7 23:25:01 2019
 
 @author: ericp
 """
-import CookingItem
 import os
+import Pantry
 
 class MainMenu:
     def __init__(self):
@@ -15,6 +15,7 @@ class MainMenu:
         self.selectedFilterNumber = None
         self.low_calorie = 0
         self.high_calorie = 0
+        self.pantries = []
         self.menu_options={
                 "0":"Add New Pantry",
                 "1":"Add New Main",
@@ -24,14 +25,19 @@ class MainMenu:
                 "5":"Set Filter Retrieval Number",
                 "6":"Select main to use",
                 "7":"Find Recipe", 
-                "8":"Quit"}
+                "8":"Quit",
+                "9":"Select Pantry to use",
+                "11":"Print Pantry"}
     
     def launch(self):
         while True:
             print("     WELCOME TO YOUR PANTRY!")
             print("Let's find something for you to eat!")
             print("==========================================")
-            print("Current Pantry: {0}".format(self.selectedPantry))
+            try:
+                print("Current Pantry: {0}".format(self.selectedPantry.get_name()))
+            except AttributeError:
+                print("Current Pantry: None")
             print("Current Main: {0}".format(self.selectedMain))
             print("Current DietRestrictions: {0}".format(self.selectedDietRestrictions))
             print("Current Filter Number: {0}".format(self.selectedFilterNumber))
@@ -44,16 +50,33 @@ class MainMenu:
                 for k,v in self.menu_options.items():
                     print("{num_val}: {written_option}".format(num_val=k,written_option=v))
                 optn = input("Press the number corresponding to the action you want to take:")
-            if optn == '8':
+            if optn == '0':
+                pantry_name = None
+                while pantry_name == None:
+                    pantry_name = input("Please enter a name for the new pantry: ")
+                n_pantry = Pantry.Pantry(pantry_name)
+                self.pantries.append(n_pantry)
+                make_default_pantry = input("Would you like this to be your default pantry? (Default to Yes):")
+                if len(make_default_pantry) == 0 or make_default_pantry[0].upper() == 'Y':
+                    self.selectedPantry = n_pantry
+            elif optn == '1':
+                if self.selectedPantry == None:
+                    os.system("clear")
+                    print("ERROR: Please select a pantry first before adding items")
+                    continue
+                else:
+                    m_or_s = 'M'
+                    self.selectedPantry.add_item(m_or_s)
+            elif optn == '2':
+                if self.selectedPantry == None:
+                    os.system("clear")
+                    print("ERROR: Please select a pantry first before adding items")
+                    continue
+                else:
+                    m_or_s = 'S'
+                    self.selectedPantry.add_item(m_or_s)
+            elif optn == '8':
                 return
-            elif optn == '1' and self.selectedPantry == None:
-                os.system('clear')
-                print("ERROR: Please select a pantry first before adding items")
-                continue
-            elif optn == '2' and self.selectedPantry == None:
-                os.system("clear")
-                print("ERROR: Please select a pantry first before adding items")
-                continue
             elif optn == '7' and self.selectedMain == None:
                 os.system("clear")
                 print("ERROR: Please select a main from the pantry you want to use")

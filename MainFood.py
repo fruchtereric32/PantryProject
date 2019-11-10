@@ -9,5 +9,11 @@ import CookingItem
 class MainFood(CookingItem.CookingItem):
     def __init__(self,fi,qt=0):
         if qt == 0:
-            qt=input("How many pieces are in the pack?")
+            qt=input("How many pieces are in the pack? (Default to 1)")
+        try:
+            qt = int(qt)
+        except ValueError:
+            qt = 1
+        if qt < 1:
+            qt = 1
         super().__init__(fi,qt)
