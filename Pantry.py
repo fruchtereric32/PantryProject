@@ -67,8 +67,8 @@ class Pantry():
         
         diet_options=DietaryOptions.get_diet_options()
         print(diet_options)
-        l_cal, h_cal = DietaryOptions.set_calorie_range()
-        filter_num = DietaryOptions.set_filter_counter()
+        h_cal, l_cal = DietaryOptions.get_calorie_options()
+        filter_num = DietaryOptions.get_filter_counter()
         
         ApiRqst = ApiRequestBuilder.ApiRequestBuilder(self.mains[int(food_to_use)].item, diet_options, l_cal, h_cal, filter_num)
         potential_recipe = requests.get(ApiRqst.get_api_string())

@@ -5,31 +5,61 @@ Created on Sun Nov  3 19:19:17 2019
 @author: ericp
 """
 
-potential_diet_options={"Well Balanced":"balanced", "High Protein":"high-protein","Low Fat":"low-fat","Low Carb":"low-carb","Vegan":"vegan","Vegatarian":"vegetarian","Sugar Conscious":"sugar-conscious","Peanut Free":"peanut-free","Tree Nut Free":"tree-nut-free","Alcohol Free":"alcohol-free"}
-select_diet_options= []
+potential_diet_options={"Well Balanced":{"balanced":False}, 
+                        "High Protein":{"high-protein":False},
+                        "Low Fat":{"low-fat":False},
+                        "Low Carb":{"low-carb":False},
+                        "Vegan":{"vegan":False},
+                        "Vegatarian":{"vegetarian":False},
+                        "Sugar Conscious":{"sugar-conscious":False},
+                        "Peanut Free":{"peanut-free":False},
+                        "Tree Nut Free":{"tree-nut-free":False},
+                        "Alcohol Free":{"alcohol-free":False}}
 filter_vars={"m_low_cal":0, "m_high_cal":10000, "m_base_number_returned":25}
 
-def get_diet_options():
-    if len(select_diet_options) != 0:
-        print("You have previously selected dietary options (See below)")
-        for key,val in potential_diet_options.items():
-            if val in select_diet_options:
-                print(key)
-        change_preferences=input("Would you like to change your settings? (Default to No)")
-        if len(change_preferences) == 0 or change_preferences[0].upper() != 'Y':
-            return select_diet_options
-    
-    select_diet_options.clear()
+def set_diet_options():
+    print("You have previously selected dietary options (See below)")
+    for key,val in potential_diet_options.items():
+        for itm_nm, selected in val.items():
+            print("{0} is set to {1}".format(key,selected))
+    print("Calories: {0} - {1}".format(filter_vars["m_low_cal"], filter_vars["m_high_cal"]))
+    print("Items to Return: {0}".format(filter_vars["m_base_number_returned"]))
+    change_preferences=input("Would you like to change your settings? (Default to No)")
+    if len(change_preferences) == 0:
+        change_preferences = 'N'
+    if change_preferences[0].upper() == 'N':
+        return
+
+    set_filter_counter()
+    set_calorie_range()
     
     for key,val in potential_diet_options.items():
-        include_diet_option = 'N'
-        include_diet_option = input("Would you like to make sure the meal is {0}?(Default to No)\n".format(key))
-        try:
-            if include_diet_option[0].upper() == 'Y':
-                select_diet_options.append(val)
-        except IndexError:
+        for itm_nm, selected in val.items():
             include_diet_option = 'N'
+            include_diet_option = input("Would you like to make sure the meal is {0}?(Default to {1})\n".format(key,selected))
+            try:
+                if include_diet_option[0].upper() == 'Y':
+                    potential_diet_options[key][itm_nm] = True
+                else:
+                    potential_diet_options[key][itm_nm] = False
+            except IndexError:
+                potential_diet_options[key][itm_nm] = False
+    
+def get_diet_options(): 
+    select_diet_options = []
+    for key,val in potential_diet_options.items():
+        s_key, s_val = val.items()
+        if s_val == True:
+            select_diet_options.append(s_key)
     return select_diet_options
+
+def view_active_diet_options():
+    selected_diet_option = ""
+    for key,val in potential_diet_options.items():
+        for s_key, s_val in val.items():
+            if s_val == True:
+                selected_diet_option += "\n\t{0}".format(key)
+    return selected_diet_option
         
 def set_calorie_range():
     low_cal = filter_vars["m_low_cal"]
@@ -85,7 +115,8 @@ def set_calorie_range():
     filter_vars["m_low_cal"] = low_cal
     filter_vars["m_high_cal"] = high_cal
     
-    return low_cal, high_cal
+def get_calorie_options():
+    return filter_vars["m_high_cal"], filter_vars["m_low_cal"]
 
 def set_filter_counter():
     while True:
@@ -105,4 +136,6 @@ def set_filter_counter():
                 else:
                     break
     filter_vars["m_base_number_returned"] = number_returned
-    return number_returned
+    
+def get_filter_counter():
+    return filter_vars["m_base_number_returned"]
