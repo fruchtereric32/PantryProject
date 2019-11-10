@@ -6,6 +6,7 @@ Created on Thu Nov  7 23:25:01 2019
 """
 import os
 import Pantry
+import DietaryOptions
 
 class MainMenu:
     def __init__(self):
@@ -21,16 +22,21 @@ class MainMenu:
                 "1":"Add New Main",
                 "2":"Add New Ingredient",
                 "3":"Set Dietary Restrictions", 
-                "4":"Set Calorie Levels", 
-                "5":"Set Filter Retrieval Number",
-                "6":"Select main to use",
-                "7":"Find Recipe", 
-                "8":"Quit",
-                "9":"Select Pantry to use",
-                "11":"Print Pantry"}
+                "4":"Select main to use",
+                "5":"Find Recipe", 
+                "6":"Quit",
+                "7":"Select Pantry to use",
+                "8":"Print Pantry"}
     
     def launch(self):
         while True:
+            self.selectedDietRestrictions = DietaryOptions.view_active_diet_options()
+            self.high_calorie, self.low_calorie = DietaryOptions.get_calorie_options()
+            self.selectedFilterNumber = DietaryOptions.get_filter_counter()
+            
+            if len(self.selectedDietRestrictions) == 0:
+                self.selectedDietRestrictions = "None"
+                
             print("     WELCOME TO YOUR PANTRY!")
             print("Let's find something for you to eat!")
             print("==========================================")
@@ -46,7 +52,7 @@ class MainMenu:
             print("==========================================")
             print("What would you like to do?")
             optn = None
-            while optn not in ['0','1','2','3','4','5','6','7','8','9','11']:
+            while optn not in ['0','1','2','3','4','5','6','7','8']:
                 for k,v in self.menu_options.items():
                     print("{num_val}: {written_option}".format(num_val=k,written_option=v))
                 optn = input("Press the number corresponding to the action you want to take:")
@@ -75,8 +81,10 @@ class MainMenu:
                 else:
                     m_or_s = 'S'
                     self.selectedPantry.add_item(m_or_s)
-            elif optn == "11":
-                print("HERE!!!!")
+            elif optn == '3':
+                os.system("clear")
+                DietaryOptions.set_diet_options()
+            elif optn == "8":
                 if self.selectedPantry == None:
                     os.system("clear")
                     print("ERROR: No pantry selected to print")
@@ -84,7 +92,7 @@ class MainMenu:
                 else:
                     print("HERE!!!!")
                     self.selectedPantry.print_items()
-            elif optn == '8':
+            elif optn == '6':
                 return
             elif optn == '7' and self.selectedMain == None:
                 os.system("clear")
