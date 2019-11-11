@@ -27,3 +27,6 @@ class CookingItem:
     
     def get_item(self):
         return self.item, self.amount
+ 
+    def get_item_name(self):
+        return self.item
