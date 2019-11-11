@@ -48,9 +48,9 @@ def set_diet_options():
 def get_diet_options(): 
     select_diet_options = []
     for key,val in potential_diet_options.items():
-        s_key, s_val = val.items()
-        if s_val == True:
-            select_diet_options.append(s_key)
+        for s_key, s_val in val.items():
+            if s_val == True:
+                select_diet_options.append(s_key)
     return select_diet_options
 
 def view_active_diet_options():

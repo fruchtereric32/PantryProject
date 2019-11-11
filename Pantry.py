@@ -26,7 +26,8 @@ class Pantry():
             if m_mn == cm:
                 mn.add_amnt()
                 return
-        self.mains.append(MainFood.MainFood(cm, qt))
+        n_main = MainFood.MainFood(cm,qt)
+        self.mains.append(n_main)
     
     def add_spice(self, sp_name, sp_amt):
         for sp in self.spices:
@@ -56,21 +57,14 @@ class Pantry():
             self.add_main(item_adding)
                 
         
-    def look_for_recipe(self):
-        print("Here are a list of items that are in your pantry")
-        print("Mains")
-        for cnt in range(len(self.mains)):
-            print("Option {optn}: You have {qty} number of {itm}".format(optn=cnt, qty=self.mains[cnt].amount, itm=self.mains[cnt].item))
-        
-        food_to_use = input("Which food would you like to make a meal out of? (Enter the option number):\n")
-        print("Finding recipes with your restrictions for {0}".format(self.mains[int(food_to_use)].item))
+    def look_for_recipe(self,main_food):
+        print("Finding recipes with your restrictions for {0}".format(main_food))
         
         diet_options=DietaryOptions.get_diet_options()
-        print(diet_options)
         h_cal, l_cal = DietaryOptions.get_calorie_options()
         filter_num = DietaryOptions.get_filter_counter()
         
-        ApiRqst = ApiRequestBuilder.ApiRequestBuilder(self.mains[int(food_to_use)].item, diet_options, l_cal, h_cal, filter_num)
+        ApiRqst = ApiRequestBuilder.ApiRequestBuilder(main_food, diet_options, l_cal, h_cal, filter_num)
         potential_recipe = requests.get(ApiRqst.get_api_string())
         if potential_recipe.json()['count'] == 0:
             print("Unforuantely we couldn't find any matches for you! Try changing your preferences")
@@ -80,6 +74,15 @@ class Pantry():
             print(rcp['recipe']['label'])
             print(rcp['recipe']['ingredientLines'])
             print("\n\n")
+    
+    def select_main_to_use(self):
+        print("Here are a list of items that are in your pantry")
+        print("Mains")
+        for cnt in range(len(self.mains)):
+            print("Option {optn}: You have {qty} number of {itm}".format(optn=cnt, qty=self.mains[cnt].amount, itm=self.mains[cnt].item))
+        
+        food_to_use = input("Which food would you like to make a meal out of? (Enter the option number):\n")
+        return self.mains[int(food_to_use)]
             
     def print_items(self):
         print("Here are a list of items that are in your pantry")
@@ -90,3 +93,4 @@ class Pantry():
         for spc in self.spices:
             s_itm, s_qty = spc.get_item()
             print("You have {qty} number of {itm}.".format(qty=s_qty, itm=s_itm))
+            

@@ -18,14 +18,14 @@ class MainMenu:
         self.high_calorie = 0
         self.pantries = []
         self.menu_options={
-                "0":"Add New Pantry",
-                "1":"Add New Main",
-                "2":"Add New Ingredient",
-                "3":"Set Dietary Restrictions", 
-                "4":"Select main to use",
-                "5":"Find Recipe", 
-                "6":"Quit",
-                "7":"Select Pantry to use",
+                "0":"Quit",
+                "1":"Add New Pantry",
+                "2":"Add New Main",
+                "3":"Add New Ingredient",
+                "4":"Set Dietary Restrictions", 
+                "5":"Select Pantry to use",
+                "6":"Select Main to use",
+                "7":"Find Recipe", 
                 "8":"Print Pantry"}
     
     def launch(self):
@@ -34,7 +34,7 @@ class MainMenu:
             self.high_calorie, self.low_calorie = DietaryOptions.get_calorie_options()
             self.selectedFilterNumber = DietaryOptions.get_filter_counter()
             
-            if len(self.selectedDietRestrictions) == 0:
+            if len(self.selectedDietRestrictions) == 0 or self.selectedDietRestrictions == "None":
                 self.selectedDietRestrictions = "None"
                 
             print("     WELCOME TO YOUR PANTRY!")
@@ -44,7 +44,11 @@ class MainMenu:
                 print("Current Pantry: {0}".format(self.selectedPantry.get_name()))
             except AttributeError:
                 print("Current Pantry: None")
-            print("Current Main: {0}".format(self.selectedMain))
+            
+            try:
+                print("Current Main: {0}".format(self.selectedMain.get_item_name()))
+            except AttributeError:
+                print("Current Main: None")
             print("Current DietRestrictions: {0}".format(self.selectedDietRestrictions))
             print("Current Filter Number: {0}".format(self.selectedFilterNumber))
             print("Low Calorie Setting: {0}".format(self.low_calorie))
@@ -57,6 +61,8 @@ class MainMenu:
                     print("{num_val}: {written_option}".format(num_val=k,written_option=v))
                 optn = input("Press the number corresponding to the action you want to take:")
             if optn == '0':
+                return
+            elif optn == '1':
                 pantry_name = None
                 while pantry_name == None:
                     pantry_name = input("Please enter a name for the new pantry: ")
@@ -65,7 +71,7 @@ class MainMenu:
                 make_default_pantry = input("Would you like this to be your default pantry? (Default to Yes):")
                 if len(make_default_pantry) == 0 or make_default_pantry[0].upper() == 'Y':
                     self.selectedPantry = n_pantry
-            elif optn == '1':
+            elif optn == '2':
                 if self.selectedPantry == None:
                     os.system("clear")
                     print("ERROR: Please select a pantry first before adding items")
@@ -73,7 +79,7 @@ class MainMenu:
                 else:
                     m_or_s = 'M'
                     self.selectedPantry.add_item(m_or_s)
-            elif optn == '2':
+            elif optn == '3':
                 if self.selectedPantry == None:
                     os.system("clear")
                     print("ERROR: Please select a pantry first before adding items")
@@ -81,23 +87,43 @@ class MainMenu:
                 else:
                     m_or_s = 'S'
                     self.selectedPantry.add_item(m_or_s)
-            elif optn == '3':
+            elif optn == '4':
                 os.system("clear")
                 DietaryOptions.set_diet_options()
+            elif optn == '5':
+                if len(self.pantries) == 0:
+                    os.system("clear")
+                    print("ERROR: There are no pantries currently created")
+                    continue
+                for pntry in range(len(self.pantries)):
+                    print("{0}: {1}".format(pntry, self.pantries[pntry].get_name()))
+                pntry_option = input("Please enter the associated number to the pantry you want (Default to first):")
+                if len(pntry_option) == 0:
+                    pntry_option = 0
+                pntry_option = int(pntry_option)
+                self.selectedPantry = self.pantries[pntry_option]
+            elif optn == '6':
+                if self.selectedPantry == None:
+                    os.system("clear")
+                    print("ERROR: Please select a pantry first before trying to select an item")
+                os.system("clear")
+                self.selectedMain = self.selectedPantry.select_main_to_use()
+            elif optn == '7':
+                if self.selectedPantry == None:
+                    os.system("clear")
+                    print("ERROR: Please select a pantry first before trying to find a recipe")
+                elif self.selectedMain == None:
+                    os.system("clear")
+                    print("ERROR: Please select a main first before trying to find a recipe")
+                else:
+                    self.selectedPantry.look_for_recipe(self.selectedMain.get_item_name())
             elif optn == "8":
                 if self.selectedPantry == None:
                     os.system("clear")
                     print("ERROR: No pantry selected to print")
                     continue
                 else:
-                    print("HERE!!!!")
                     self.selectedPantry.print_items()
-            elif optn == '6':
-                return
-            elif optn == '7' and self.selectedMain == None:
-                os.system("clear")
-                print("ERROR: Please select a main from the pantry you want to use")
-                continue
             
 new_run = MainMenu()
 new_run.launch()
