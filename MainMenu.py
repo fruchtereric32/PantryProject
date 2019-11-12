@@ -8,6 +8,11 @@ import os
 import Pantry
 import DietaryOptions
 
+##This class MainMenu is exactly what it sounds like
+##It's the operating menu for all functionality
+##We stored all teh selected items and filter settings
+##and then display them to the user along with 9 options of things to do
+#We keep it in a while loop until the user quits
 class MainMenu:
     def __init__(self):
         self.selectedPantry = None

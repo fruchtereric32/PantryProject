@@ -4,7 +4,9 @@ Created on Sun Nov  3 19:19:17 2019
 
 @author: ericp
 """
-
+##Defined some modulcar variables
+##potential_diet_options keeps track of the diet options offered, 
+##the key to use in the lookup and wether it's set or not
 potential_diet_options={"Well Balanced":{"balanced":False}, 
                         "High Protein":{"high-protein":False},
                         "Low Fat":{"low-fat":False},
@@ -15,8 +17,16 @@ potential_diet_options={"Well Balanced":{"balanced":False},
                         "Peanut Free":{"peanut-free":False},
                         "Tree Nut Free":{"tree-nut-free":False},
                         "Alcohol Free":{"alcohol-free":False}}
+
+##filer_vars keeps track of the one item notes like the calorie settings 
+##and the number of items returned
 filter_vars={"m_low_cal":0, "m_high_cal":10000, "m_base_number_returned":25}
 
+##The function set_diet_options first displays all currently selected options
+##Then we prompt if the user wants to change any settings or not
+##We then call the functions for setting the filter counter and calorie range
+##We finally then go through all potential_diet_options 
+##with the default selection being the current one
 def set_diet_options():
     print("You have previously selected dietary options (See below)")
     for key,val in potential_diet_options.items():
@@ -44,7 +54,8 @@ def set_diet_options():
                     potential_diet_options[key][itm_nm] = False
             except IndexError:
                 potential_diet_options[key][itm_nm] = False
-    
+
+##The function get_diet_options returns all items in potential_diet_options set to True in a list   
 def get_diet_options(): 
     select_diet_options = []
     for key,val in potential_diet_options.items():
@@ -53,6 +64,8 @@ def get_diet_options():
                 select_diet_options.append(s_key)
     return select_diet_options
 
+##The function get_diet_options returns all items in potential_diet_options set to 
+##True in a formatted string   
 def view_active_diet_options():
     selected_diet_option = ""
     for key,val in potential_diet_options.items():
@@ -61,6 +74,11 @@ def view_active_diet_options():
                 selected_diet_option += "\n\t{0}".format(key)
     return selected_diet_option
         
+##The function set_calorie_range displays the current calorie setting and 
+##asks the user if they want to change it
+##If they do, we let the user modify them but we make sure the 
+##low coutner isn't higher than the high counter
+##We then store those values back in filter_vars
 def set_calorie_range():
     low_cal = filter_vars["m_low_cal"]
     high_cal = filter_vars["m_high_cal"]
@@ -114,10 +132,17 @@ def set_calorie_range():
         high_cal = int(high_cal)
     filter_vars["m_low_cal"] = low_cal
     filter_vars["m_high_cal"] = high_cal
-    
+
+##The function get_calorie_options returns teh high and low calorie settings    
 def get_calorie_options():
     return filter_vars["m_high_cal"], filter_vars["m_low_cal"]
 
+
+##The function set_filter_counter first shows the number stored in filter_vars
+##We then prompt the user to see if they want to change it.
+##If they do, we prompt them to enter a new number and 
+##continue to prompt them until they enter something 0 or over
+##The number is then stored back into filter_vars
 def set_filter_counter():
     while True:
         number_returned = filter_vars["m_base_number_returned"]
@@ -130,12 +155,13 @@ def set_filter_counter():
                 number_returned = filter_vars["m_base_number_returned"]
             else:
                 number_returned = int(number_returned)
-                if number_returned < 1:
-                    print("Any number less than 1 is invalid")
+                if number_returned < 0:
+                    print("Any number less than 0 is invalid")
                     continue
                 else:
                     break
     filter_vars["m_base_number_returned"] = number_returned
     
+##The function get_filter_coutner returns the stored number of recipes to return
 def get_filter_counter():
     return filter_vars["m_base_number_returned"]

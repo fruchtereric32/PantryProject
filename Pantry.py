@@ -11,15 +11,23 @@ import requests
 import DietaryOptions
 import ApiRequestBuilder
 
+##The class Pantry will be used to store items in the given pantry 
+##and perform actions using those items
 class Pantry():
+    ##In the constructor, we create the pantry and create lists for mains and spices
     def __init__(self, name):
         self.name = name
         self.mains=[]
         self.spices=[]
     
+    ##get_name returns the name of the pantry
     def get_name(self):
         return self.name
     
+    ##add_main is used to add a main item to this pantry
+    ##If we see the item is already in the main, we just use the add_amnt function to add to the qty
+    ##If the item is not already in the pantry, we create a new main item 
+    ##and add it to the mains list
     def add_main(self, cm, qt=0):
         for mn in self.mains:
             m_mn, m_qty = mn.get_item()
@@ -29,6 +37,7 @@ class Pantry():
         n_main = MainFood.MainFood(cm,qt)
         self.mains.append(n_main)
     
+    ##add_spice works exactly as add_main except for spices (non-mains)
     def add_spice(self, sp_name, sp_amt):
         for sp in self.spices:
             s_mn, s_qty = sp.get_item()
@@ -36,7 +45,11 @@ class Pantry():
                 sp.add_amnt()
                 return
         self.spices.append(Spice.Spice(sp_name,sp_amt))
-        
+    
+    ##The add_item function is the one called from teh main menu
+    ##Depending on what's passed along, the fucntion will call the appropriate internal function
+    ##It will before that prompt for the item being added and in case of a spice, will request qty
+    ##Default qty will always be 1
     def add_item(self, main_or_side):
         item_adding = ""
         while len(item_adding) == 0:
@@ -56,7 +69,10 @@ class Pantry():
         else:
             self.add_main(item_adding)
                 
-        
+    ##The look_for_recipe function takes in the provided main item.
+    ##It then looks at the dietary options set before and calls the API functionality to get recipes
+    ##If nothing is found, we apologize and recommend changing the dietary options
+    ##Otherwise, we show the users the names of the recipe and what ingredients would be involved    
     def look_for_recipe(self,main_food):
         print("Finding recipes with your restrictions for {0}".format(main_food))
         
@@ -75,6 +91,9 @@ class Pantry():
             print(rcp['recipe']['ingredientLines'])
             print("\n\n")
     
+    
+    ##The select_main_to_use shows a user a list of all mains in the pantry
+    ##It then asks the user to choose which item they want to select for now
     def select_main_to_use(self):
         print("Here are a list of items that are in your pantry")
         print("Mains")
@@ -84,6 +103,7 @@ class Pantry():
         food_to_use = input("Which food would you like to make a meal out of? (Enter the option number):\n")
         return self.mains[int(food_to_use)]
             
+    ##The print_items function displays to the user a list of all mains and spices in the pantry
     def print_items(self):
         print("Here are a list of items that are in your pantry")
         print("Mains")
