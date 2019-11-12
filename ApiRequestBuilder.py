@@ -4,8 +4,11 @@ Created on Sun Nov  3 23:06:51 2019
 
 @author: ericp
 """
-
+##The class ApiRequestBuilder is used to put together all the parts to get the API ready
 class ApiRequestBuilder:
+    ##The constructor takes in the main food being used, 
+    ##the health list, calorie counters and filter number
+    ##It then composes the api putting all teh variables in the right place
     def __init__(self, main, hl, lc, hc, fn):
         self.app_id = "ab4bf454"
         self.app_key = "80971399f1f660312ba74b72ad419237"
@@ -21,6 +24,6 @@ class ApiRequestBuilder:
                 elif itm in diet_items:
                     self.api_string+="&diet={di}".format(di=itm)
         
-                
+    ##The function get_api_string takes the already built api string and returns it to be used            
     def get_api_string(self):
         return self.api_string
