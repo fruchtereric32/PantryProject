@@ -10,6 +10,7 @@ import Spice
 import requests
 import DietaryOptions
 import ApiRequestBuilder
+import Recipe
 
 ##The class Pantry will be used to store items in the given pantry 
 ##and perform actions using those items
@@ -19,6 +20,7 @@ class Pantry():
         self.name = name
         self.mains=[]
         self.spices=[]
+        self.stored_recipes={}
     
     ##get_name returns the name of the pantry
     def get_name(self):
@@ -72,7 +74,7 @@ class Pantry():
     ##The look_for_recipe function takes in the provided main item.
     ##It then looks at the dietary options set before and calls the API functionality to get recipes
     ##If nothing is found, we apologize and recommend changing the dietary options
-    ##Otherwise, we show the users the names of the recipe and what ingredients would be involved    
+    ##Otherwise, we store the recipes into an array and print out the information for the recipe    
     def look_for_recipe(self,main_food):
         print("Finding recipes with your restrictions for {0}".format(main_food))
         
@@ -86,9 +88,16 @@ class Pantry():
             print("Unforuantely we couldn't find any matches for you! Try changing your preferences")
             return
         recipes = potential_recipe.json()['hits']
+        num = 0
         for rcp in recipes:
-            print(rcp['recipe']['label'])
-            print(rcp['recipe']['ingredientLines'])
+            num += 1
+            n_recipe = Recipe.Recipe(rcp['recipe'])
+            print(n_recipe.get_recipe_name())
+            print(n_recipe.get_diet_labels())
+            print(n_recipe.get_ingredients())
+            print(n_recipe.get_cautions())
+            print(n_recipe.get_calories())
+            self.stored_recipes["{0}".format(num)] = n_recipe
             print("\n\n")
     
     
