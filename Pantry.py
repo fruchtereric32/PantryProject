@@ -11,6 +11,7 @@ import requests
 import DietaryOptions
 import ApiRequestBuilder
 import Recipe
+import os
 
 ##The class Pantry will be used to store items in the given pantry 
 ##and perform actions using those items
@@ -134,24 +135,26 @@ class Pantry():
     ##The function select_recipe dislays recipes stored 
     ##for selection at the increment requested by users
     def select_recipe(self, interval_num=5):
-        for cnt, rcp in self.stored_recipes:
+        for cnt, rcp in self.stored_recipes.items():
             print("Option {0}".format(cnt))
             print("============")
             print(rcp)
             
-            if cnt%interval_num == 0 
-            or cnt == len(self.stored_recipes):
+            int_cnt = int(cnt)
+            
+            if int_cnt%interval_num == 0 \
+            or int_cnt == len(self.stored_recipes):
                 choice = "-1"
-                if cnt%interval_num == 0:
-                    options = [string(i) for i in range(cnt - interval_num, cnt + 1)]
-                    if len(self.stored_recipes) != cnt:
+                if int_cnt%interval_num == 0:
+                    options = [str(i) for i in range(int_cnt - interval_num, int_cnt + 1)]
+                    if len(self.stored_recipes) != int_cnt:
                         options.append('N')
                 else:
-                    options = [string(i) for i in range(cnt - (cnt%interval_num), cnt +1)]
+                    options = [str(i) for i in range(int_cnt - (int_cnt%interval_num), int_cnt +1)]
                 options.append('Q')
                 while choice not in options:
                     print("Please select one of the above options by it's number, 'N' for the next set or 'Q' to Quit:")
-                    choice = input("Enter Choice:)
+                    choice = input("Enter Choice:")
                 if choice.upper() == 'N':
                     os.system("clear")
                     print("Getting Next Recipes..")
@@ -168,7 +171,7 @@ class Pantry():
                 
     ##The function get_selected_recipe returns the selected Recipe
     def get_selected_recipe(self):
-        return self.stored_recipes[string(self.selected_recipe_index)]
+        return self.stored_recipes[str(self.selected_recipe_index)]
                 
                     
     ##The static function pantry_count returns how many pantries there are right now

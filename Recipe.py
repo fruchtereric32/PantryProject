@@ -73,6 +73,6 @@ class Recipe:
         r_string += "Ingredients:{0}\n\n".format(self.get_ingredients())
         r_string += "Directions Available:{0}\n\n".format(self.get_proper_recipe_link())
         r_string += "Calories:{0}\n\n".format(self.get_calories())
-        r_string += "Diet Labels:{0}\n\n".format(self.get_diet_labels())
+        r_string += "Diet Labels:{0}\n\n".format(self.get_diet_labels()[0])
         r_string += "Cautionary Items:{0}\n\n".format(self.get_cautions())
         return r_string
