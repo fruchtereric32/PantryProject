@@ -7,6 +7,7 @@ Created on Thu Nov  7 23:25:01 2019
 import os
 import Pantry
 import DietaryOptions
+import Recipe
 
 ##This class MainMenu is exactly what it sounds like
 ##It's the operating menu for all functionality
@@ -19,6 +20,7 @@ class MainMenu:
         self.selectedMain = None
         self.selectedDietRestrictions = None
         self.selectedFilterNumber = None
+        self.currentRecipe = None
         self.low_calorie = 0
         self.high_calorie = 0
         self.pantries = []
@@ -31,7 +33,8 @@ class MainMenu:
                 "5":"Select Pantry to use",
                 "6":"Select Main to use",
                 "7":"Find Recipe", 
-                "8":"Print Pantry"}
+                "8":"Print Pantry",
+                "9":"Select Recipe"}
     
     def launch(self):
         while True:
@@ -58,10 +61,13 @@ class MainMenu:
             print("Current Filter Number: {0}".format(self.selectedFilterNumber))
             print("Low Calorie Setting: {0}".format(self.low_calorie))
             print("High Calorie Setting: {0}".format(self.high_calorie))
+            if Pantry.Pantry.pantry_count() != 0 
+            and self.selectedPantry != None:
+                print("Selected Recipes: {0}".format(self.selectedPantry.has_selected_recipes()))
             print("==========================================")
             print("What would you like to do?")
             optn = None
-            while optn not in ['0','1','2','3','4','5','6','7','8']:
+            while optn not in ['0','1','2','3','4','5','6','7','8','9']:
                 for k,v in self.menu_options.items():
                     print("{num_val}: {written_option}".format(num_val=k,written_option=v))
                 optn = input("Press the number corresponding to the action you want to take:")
@@ -129,6 +135,26 @@ class MainMenu:
                     continue
                 else:
                     self.selectedPantry.print_items()
+            elif optn == '9':
+                if self.selectedPantry == None:
+                    os.system("clear")
+                    print("ERROR: Please select a pantry first before pulling up recipes")
+                    continue
+                elif self.selectedPantry.has_selected_recipes() == "False":
+                    os.system("clear")
+                    print("ERROR: Please find recipes before pulling up recipes")
+                else:
+                    view_amount = input("How many items would you like to view at one time? (Default to 5):")
+                    try:
+                        view_amount = int(view_amount)
+                    except ValueError:
+                        view_amount = 1
+                    selected_recipe = self.selectedPantry.select_recipe(view_amount)
+                    if selected_recipe:
+                        self.currentRecipe = self.selectedPantry.get_selected_recipe()
+                    else:
+                        self.currentRecipe = None
+                        
             
 new_run = MainMenu()
 new_run.launch()
