@@ -61,7 +61,7 @@ class MainMenu:
             print("Current Filter Number: {0}".format(self.selectedFilterNumber))
             print("Low Calorie Setting: {0}".format(self.low_calorie))
             print("High Calorie Setting: {0}".format(self.high_calorie))
-            if Pantry.Pantry.pantry_count() != 0 
+            if Pantry.Pantry.pantry_count() != 0 \
             and self.selectedPantry != None:
                 print("Selected Recipes: {0}".format(self.selectedPantry.has_selected_recipes()))
             print("==========================================")
