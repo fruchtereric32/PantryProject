@@ -15,12 +15,17 @@ import Recipe
 ##The class Pantry will be used to store items in the given pantry 
 ##and perform actions using those items
 class Pantry():
+    
+    ##Used to keep track of how many Pantries there are
+    counter = 0
+    
     ##In the constructor, we create the pantry and create lists for mains and spices
     def __init__(self, name):
         self.name = name
         self.mains=[]
         self.spices=[]
         self.stored_recipes={}
+        Pantry.counter+=1
     
     ##get_name returns the name of the pantry
     def get_name(self):
@@ -76,6 +81,7 @@ class Pantry():
     ##If nothing is found, we apologize and recommend changing the dietary options
     ##Otherwise, we store the recipes into an array and print out the information for the recipe    
     def look_for_recipe(self,main_food):
+        self.stored_recipes.clear()
         print("Finding recipes with your restrictions for {0}".format(main_food))
         
         diet_options=DietaryOptions.get_diet_options()
@@ -92,13 +98,8 @@ class Pantry():
         for rcp in recipes:
             num += 1
             n_recipe = Recipe.Recipe(rcp['recipe'])
-            print(n_recipe.get_recipe_name())
-            print(n_recipe.get_diet_labels())
-            print(n_recipe.get_ingredients())
-            print(n_recipe.get_cautions())
-            print(n_recipe.get_calories())
             self.stored_recipes["{0}".format(num)] = n_recipe
-            print("\n\n")
+            print(n_recipe)
     
     
     ##The select_main_to_use shows a user a list of all mains in the pantry
@@ -122,4 +123,57 @@ class Pantry():
         for spc in self.spices:
             s_itm, s_qty = spc.get_item()
             print("You have {qty} number of {itm}.".format(qty=s_qty, itm=s_itm))
+            
+    ##The function has_selected_recipes let's users know if they have any stored selected recipes
+    def has_selected_recipes(self):
+        if len(self.stored_recipes) == 0:
+            return "False"
+        else:
+            return "True"
+    
+    ##The function select_recipe dislays recipes stored 
+    ##for selection at the increment requested by users
+    def select_recipe(self, interval_num=5):
+        for cnt, rcp in self.stored_recipes:
+            print("Option {0}".format(cnt))
+            print("============")
+            print(rcp)
+            
+            if cnt%interval_num == 0 
+            or cnt == len(self.stored_recipes):
+                choice = "-1"
+                if cnt%interval_num == 0:
+                    options = [string(i) for i in range(cnt - interval_num, cnt + 1)]
+                    if len(self.stored_recipes) != cnt:
+                        options.append('N')
+                else:
+                    options = [string(i) for i in range(cnt - (cnt%interval_num), cnt +1)]
+                options.append('Q')
+                while choice not in options:
+                    print("Please select one of the above options by it's number, 'N' for the next set or 'Q' to Quit:")
+                    choice = input("Enter Choice:)
+                if choice.upper() == 'N':
+                    os.system("clear")
+                    print("Getting Next Recipes..")
+                    continue
+                elif choice.upper() == 'Q':
+                    os.system("clear")
+                    print("Going Back to Main Menu")
+                    return False
+                else:
+                    print("Recipe Selected!")
+                    choice = int(choice)
+                    self.selected_recipe_index = choice
+                    return True
+                
+    ##The function get_selected_recipe returns the selected Recipe
+    def get_selected_recipe(self):
+        return self.stored_recipes[string(self.selected_recipe_index)]
+                
+                    
+    ##The static function pantry_count returns how many pantries there are right now
+    def pantry_count():
+        return Pantry.counter
+    
+        
             
