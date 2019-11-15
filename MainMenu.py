@@ -8,7 +8,6 @@ import os
 import Pantry
 import DietaryOptions
 import Recipe
-import webbrowser
 
 ##This class MainMenu is exactly what it sounds like
 ##It's the operating menu for all functionality
