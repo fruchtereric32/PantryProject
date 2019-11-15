@@ -8,6 +8,7 @@ import os
 import Pantry
 import DietaryOptions
 import Recipe
+import webbrowser
 
 ##This class MainMenu is exactly what it sounds like
 ##It's the operating menu for all functionality
@@ -25,7 +26,7 @@ class MainMenu:
         self.high_calorie = 0
         self.pantries = []
         self.menu_options={
-                "0":"Quit",
+                "Q":"Quit",
                 "1":"Add New Pantry",
                 "2":"Add New Main",
                 "3":"Add New Ingredient",
@@ -34,7 +35,8 @@ class MainMenu:
                 "6":"Select Main to use",
                 "7":"Find Recipe", 
                 "8":"Print Pantry",
-                "9":"Select Recipe"}
+                "9":"Select Recipe",
+                "0": "Display Current Recipe Info"}
     
     def launch(self):
         while True:
@@ -64,14 +66,18 @@ class MainMenu:
             if Pantry.Pantry.pantry_count() != 0 \
             and self.selectedPantry != None:
                 print("Selected Recipes: {0}".format(self.selectedPantry.has_selected_recipes()))
+            try:
+                print("Current Recipe: {0}".format(self.currentRecipe.get_recipe_name()))
+            except AttributeError:
+                pass
             print("==========================================")
             print("What would you like to do?")
             optn = None
-            while optn not in ['0','1','2','3','4','5','6','7','8','9']:
+            while optn not in ['0','1','2','3','4','5','6','7','8','9','Q','q']:
                 for k,v in self.menu_options.items():
                     print("{num_val}: {written_option}".format(num_val=k,written_option=v))
                 optn = input("Press the number corresponding to the action you want to take:")
-            if optn == '0':
+            if optn.upper() == 'Q':
                 return
             elif optn == '1':
                 pantry_name = None
@@ -154,7 +160,17 @@ class MainMenu:
                         self.currentRecipe = self.selectedPantry.get_selected_recipe()
                     else:
                         self.currentRecipe = None
-                        
+            elif optn == '0':
+                if self.currentRecipe == None:
+                    os.system("clear")
+                    print("ERROR: Please select a Recipe first before attempting to read it")
+                else:
+                    print(self.currentRecipe)
+                    launch_url = input("Would you like to launch the URL for this Recipe (Default to N):")
+                    if len(launch_url) == 0:
+                        launch_url = 'N'
+                    if launch_url.upper()[0] == 'Y':
+                        webbrowser.open(self.currentRecipe.launch_main_link(), new=2, autoraise=True)
             
 new_run = MainMenu()
 new_run.launch()

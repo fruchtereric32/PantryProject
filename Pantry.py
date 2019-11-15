@@ -99,8 +99,9 @@ class Pantry():
         for rcp in recipes:
             num += 1
             n_recipe = Recipe.Recipe(rcp['recipe'])
-            self.stored_recipes["{0}".format(num)] = n_recipe
+            self.stored_recipes[str(num)]=n_recipe
             print(n_recipe)
+        print("Recipes Retrieved and Stored! Use the Main Menu to Look at Them")
     
     
     ##The select_main_to_use shows a user a list of all mains in the pantry
@@ -127,6 +128,7 @@ class Pantry():
             
     ##The function has_selected_recipes let's users know if they have any stored selected recipes
     def has_selected_recipes(self):
+        print(len(self.stored_recipes))
         if len(self.stored_recipes) == 0:
             return "False"
         else:
