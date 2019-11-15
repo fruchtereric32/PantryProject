@@ -5,6 +5,7 @@ Created on Tue Nov 12 20:23:54 2019
 @author: ericp
 """
 import requests
+import webbrowser
 
 ##This class will be used to store the important part of the recipes
 class Recipe:
@@ -41,7 +42,7 @@ class Recipe:
     ##The function launch_main_link will be used to launch in the default browser the url
     ##for the recipe
     def launch_main_link(self):
-        return self.endamam_url
+        webbrowser.open(self.endamam_url, new=2, autoraise=True)
     
     ##The function get_ingredients will return the list of ingredients
     def get_ingredients(self):

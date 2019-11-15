@@ -170,7 +170,7 @@ class MainMenu:
                     if len(launch_url) == 0:
                         launch_url = 'N'
                     if launch_url.upper()[0] == 'Y':
-                        webbrowser.open(self.currentRecipe.launch_main_link(), new=2, autoraise=True)
+                        self.currentRecipe.launch_main_link()
             
 new_run = MainMenu()
 new_run.launch()
