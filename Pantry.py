@@ -177,7 +177,7 @@ class Pantry():
                 
                     
     ##The static function pantry_count returns how many pantries there are right now
-    def pantry_count():
+    def pantry_count(self):
         return Pantry.counter
     
         
