@@ -7,6 +7,7 @@ Created on Thu Nov  7 23:25:01 2019
 import os
 import Pantry
 import DietaryOptions
+import DatabaseConnector
 import Recipe
 
 ##This class MainMenu is exactly what it sounds like
@@ -172,4 +173,7 @@ class MainMenu:
                         self.currentRecipe.launch_main_link()
             
 new_run = MainMenu()
+db = DatabaseConnector.DatabaseConnector()
+db.query("Select * from users")
+print(db.return_response(1))
 new_run.launch()
