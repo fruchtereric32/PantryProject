@@ -9,10 +9,13 @@ class DatabaseConnector:
             auth_plugin="mysql_native_password",
             database="mypantry"
         )
+        self.mySQLcursor = self.mySQLquery.cursor()
 
     def query(self,QRY):
-        self.mySQLquery.query(QRY)
-        self.results = self.mySQLquery.use_result()
+        self.mySQLcursor.execute(QRY)
 
     def return_response(self, num_to_return=1):
-        return self.results.fetch_row(num_to_return,1)
+        return self.mySQLcursor.fetchmany(num_to_return)
+
+    def save_changes(self):
+        self.mySQLquery.commit()

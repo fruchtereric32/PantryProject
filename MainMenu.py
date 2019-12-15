@@ -8,7 +8,7 @@ import os
 import Pantry
 import DietaryOptions
 import DatabaseConnector
-import Recipe
+import ActiveUser
 
 ##This class MainMenu is exactly what it sounds like
 ##It's the operating menu for all functionality
@@ -37,11 +37,16 @@ class MainMenu:
                 "8":"Print Pantry",
                 "9":"Select Recipe",
                 "0": "Display Current Recipe Info"}
+        self.db = DatabaseConnector.DatabaseConnector()
+
     
     def launch(self):
+        self.db.query("Select id,default_pantry,default_max_calories,default_min_calories from users")
+        currentUser = ActiveUser.ActiveUser(self.db.return_response())
+
         while True:
             self.selectedDietRestrictions = DietaryOptions.view_active_diet_options()
-            self.high_calorie, self.low_calorie = DietaryOptions.get_calorie_options()
+            self.high_calorie, self.low_calorie = DietaryOptions.get_calorie_options(currentUser)
             self.selectedFilterNumber = DietaryOptions.get_filter_counter()
             
             if len(self.selectedDietRestrictions) == 0 or self.selectedDietRestrictions == "None":
@@ -106,7 +111,7 @@ class MainMenu:
                     self.selectedPantry.add_item(m_or_s)
             elif optn == '4':
                 os.system("clear")
-                DietaryOptions.set_diet_options()
+                DietaryOptions.set_diet_options(currentUser, self.db)
             elif optn == '5':
                 if len(self.pantries) == 0:
                     os.system("clear")
@@ -173,7 +178,4 @@ class MainMenu:
                         self.currentRecipe.launch_main_link()
             
 new_run = MainMenu()
-db = DatabaseConnector.DatabaseConnector()
-db.query("Select * from users")
-print(db.return_response(1))
 new_run.launch()
