@@ -48,6 +48,7 @@ class MainMenu:
             self.selectedDietRestrictions = DietaryOptions.view_active_diet_options()
             self.high_calorie, self.low_calorie = DietaryOptions.get_calorie_options(currentUser)
             self.selectedFilterNumber = DietaryOptions.get_filter_counter()
+            self.selectedPantry = Pantry.Pantry("load", currentUser.get_user_id(), self.db, "blah")
             
             if len(self.selectedDietRestrictions) == 0 or self.selectedDietRestrictions == "None":
                 self.selectedDietRestrictions = "None"
@@ -56,7 +57,7 @@ class MainMenu:
             print("Let's find something for you to eat!")
             print("==========================================")
             try:
-                print("Current Pantry: {0}".format(self.selectedPantry.get_name()))
+                print("Current Pantry: {0}".format(self.selectedPantry.get_name(self.db, currentUser.get_default_pantry())))
             except AttributeError:
                 print("Current Pantry: None")
             
@@ -78,7 +79,7 @@ class MainMenu:
             print("==========================================")
             print("What would you like to do?")
             optn = None
-            while optn not in ['0','1','2','3','4','5','6','7','8','9','Q','q']:
+            while optn not in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Q', 'q']:
                 for k,v in self.menu_options.items():
                     print("{num_val}: {written_option}".format(num_val=k,written_option=v))
                 optn = input("Press the number corresponding to the action you want to take:")
@@ -88,11 +89,8 @@ class MainMenu:
                 pantry_name = None
                 while pantry_name == None:
                     pantry_name = input("Please enter a name for the new pantry: ")
-                n_pantry = Pantry.Pantry(pantry_name)
+                n_pantry = Pantry.Pantry("new", currentUser.get_user_id(), self.db, pantry_name)
                 self.pantries.append(n_pantry)
-                make_default_pantry = input("Would you like this to be your default pantry? (Default to Yes):")
-                if len(make_default_pantry) == 0 or make_default_pantry[0].upper() == 'Y':
-                    self.selectedPantry = n_pantry
             elif optn == '2':
                 if self.selectedPantry == None:
                     os.system("clear")

@@ -18,3 +18,9 @@ class ActiveUser:
     def set_cal_levels(self,high,low):
         self.max_calories = high
         self.min_calories = low
+
+    def get_default_pantry(self):
+        return self.default_pantry
+
+    def set_default_pantry(self, dp):
+        self.default_pantry = dp

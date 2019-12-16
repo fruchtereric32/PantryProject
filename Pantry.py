@@ -13,25 +13,52 @@ import ApiRequestBuilder
 import Recipe
 import os
 
-##The class Pantry will be used to store items in the given pantry 
+
+##The class Pantry will be used to store items in the given pantry
 ##and perform actions using those items
 class Pantry():
-    
     ##Used to keep track of how many Pantries there are
     counter = 0
-    
+
     ##In the constructor, we create the pantry and create lists for mains and spices
-    def __init__(self, name):
-        self.name = name
-        self.mains=[]
-        self.spices=[]
-        self.stored_recipes={}
-        Pantry.counter+=1
-    
+    def __init__(self, load_new, user_id, db, name):
+        Pantry.counter += 1
+        self.mains = []
+        self.spices = []
+        self.stored_recipes = []
+
+        if load_new == "new":
+            self.name = name
+            sql_query = "insert into pantry (user_id, pantry_name) values ({0},\"{1}\")".format(user_id, name)
+            db.query(sql_query)
+            db.save_changes()
+            sql_query = "select max(id) from pantry where user_id = {0}".format(user_id)
+            db.query(sql_query)
+            id_num = db.return_response(1)[0][0]
+            make_default_pantry = input("Would you like this to be your default pantry? (Default to Yes):")
+            if len(make_default_pantry) == 0 or make_default_pantry[0].upper() == 'Y':
+                sql_query = "update users set default_pantry = {0} where id = {1}".format(id_num, user_id)
+                db.query(sql_query)
+                db.save_changes()
+        else:
+            sql_query = "select pantry.pantry_name from pantry, users where users.id = {0} and pantry.id = " \
+                        "users.default_pantry".format(user_id)
+            db.query(sql_query)
+            db.save_changes()
+            self.name = db.return_response(1)[0][0]
+
     ##get_name returns the name of the pantry
-    def get_name(self):
+    def get_name(self, db, id=0):
+        print(id)
+        if id == 0:
+            return self.name
+        else:
+            sql_query = "select pantry.pantry_name from pantry where id = {0}".format(id)
+            db.query(sql_query)
+            self.name = db.return_response(1)[0][0]
+            db.save_changes()
         return self.name
-    
+
     ##add_main is used to add a main item to this pantry
     ##If we see the item is already in the main, we just use the add_amnt function to add to the qty
     ##If the item is not already in the pantry, we create a new main item 
@@ -42,9 +69,9 @@ class Pantry():
             if m_mn == cm:
                 mn.add_amnt()
                 return
-        n_main = MainFood.MainFood(cm,qt)
+        n_main = MainFood.MainFood(cm, qt)
         self.mains.append(n_main)
-    
+
     ##add_spice works exactly as add_main except for spices (non-mains)
     def add_spice(self, sp_name, sp_amt):
         for sp in self.spices:
@@ -52,8 +79,8 @@ class Pantry():
             if s_mn == sp_name:
                 sp.add_amnt()
                 return
-        self.spices.append(Spice.Spice(sp_name,sp_amt))
-    
+        self.spices.append(Spice.Spice(sp_name, sp_amt))
+
     ##The add_item function is the one called from teh main menu
     ##Depending on what's passed along, the fucntion will call the appropriate internal function
     ##It will before that prompt for the item being added and in case of a spice, will request qty
@@ -76,19 +103,19 @@ class Pantry():
             self.add_spice(item_adding, num_bought)
         else:
             self.add_main(item_adding)
-                
+
     ##The look_for_recipe function takes in the provided main item.
     ##It then looks at the dietary options set before and calls the API functionality to get recipes
     ##If nothing is found, we apologize and recommend changing the dietary options
     ##Otherwise, we store the recipes into an array and print out the information for the recipe    
-    def look_for_recipe(self,main_food):
+    def look_for_recipe(self, main_food):
         self.stored_recipes.clear()
         print("Finding recipes with your restrictions for {0}".format(main_food))
-        
-        diet_options=DietaryOptions.get_diet_options()
+
+        diet_options = DietaryOptions.get_diet_options()
         h_cal, l_cal = DietaryOptions.get_calorie_options()
         filter_num = DietaryOptions.get_filter_counter()
-        
+
         ApiRqst = ApiRequestBuilder.ApiRequestBuilder(main_food, diet_options, l_cal, h_cal, filter_num)
         potential_recipe = requests.get(ApiRqst.get_api_string())
         if potential_recipe.json()['count'] == 0:
@@ -99,22 +126,22 @@ class Pantry():
         for rcp in recipes:
             num += 1
             n_recipe = Recipe.Recipe(rcp['recipe'])
-            self.stored_recipes[str(num)]=n_recipe
+            self.stored_recipes[str(num)] = n_recipe
             print(n_recipe)
         print("Recipes Retrieved and Stored! Use the Main Menu to Look at Them")
-    
-    
+
     ##The select_main_to_use shows a user a list of all mains in the pantry
     ##It then asks the user to choose which item they want to select for now
     def select_main_to_use(self):
         print("Here are a list of items that are in your pantry")
         print("Mains")
         for cnt in range(len(self.mains)):
-            print("Option {optn}: You have {qty} number of {itm}".format(optn=cnt, qty=self.mains[cnt].amount, itm=self.mains[cnt].item))
-        
+            print("Option {optn}: You have {qty} number of {itm}".format(optn=cnt, qty=self.mains[cnt].amount,
+                                                                         itm=self.mains[cnt].item))
+
         food_to_use = input("Which food would you like to make a meal out of? (Enter the option number):\n")
         return self.mains[int(food_to_use)]
-            
+
     ##The print_items function displays to the user a list of all mains and spices in the pantry
     def print_items(self):
         print("Here are a list of items that are in your pantry")
@@ -125,7 +152,7 @@ class Pantry():
         for spc in self.spices:
             s_itm, s_qty = spc.get_item()
             print("You have {qty} number of {itm}.".format(qty=s_qty, itm=s_itm))
-            
+
     ##The function has_selected_recipes let's users know if they have any stored selected recipes
     def has_selected_recipes(self):
         print(len(self.stored_recipes))
@@ -133,7 +160,7 @@ class Pantry():
             return "False"
         else:
             return "True"
-    
+
     ##The function select_recipe dislays recipes stored 
     ##for selection at the increment requested by users
     def select_recipe(self, interval_num=5):
@@ -141,18 +168,18 @@ class Pantry():
             print("Option {0}".format(cnt))
             print("============")
             print(rcp)
-            
+
             int_cnt = int(cnt)
-            
-            if int_cnt%interval_num == 0 \
-            or int_cnt == len(self.stored_recipes):
+
+            if int_cnt % interval_num == 0 \
+                    or int_cnt == len(self.stored_recipes):
                 choice = "-1"
-                if int_cnt%interval_num == 0:
+                if int_cnt % interval_num == 0:
                     options = [str(i) for i in range(int_cnt - interval_num, int_cnt + 1)]
                     if len(self.stored_recipes) != int_cnt:
                         options.append('N')
                 else:
-                    options = [str(i) for i in range(int_cnt - (int_cnt%interval_num), int_cnt +1)]
+                    options = [str(i) for i in range(int_cnt - (int_cnt % interval_num), int_cnt + 1)]
                 options.append('Q')
                 while choice not in options:
                     print("Please select one of the above options by it's number, 'N' for the next set or 'Q' to Quit:")
@@ -170,16 +197,12 @@ class Pantry():
                     choice = int(choice)
                     self.selected_recipe_index = choice
                     return True
-                
+
     ##The function get_selected_recipe returns the selected Recipe
     def get_selected_recipe(self):
         return self.stored_recipes[str(self.selected_recipe_index)]
-                
-                    
+
     ##The static function pantry_count returns how many pantries there are right now
     @staticmethod
     def pantry_count():
         return Pantry.counter
-    
-        
-            
